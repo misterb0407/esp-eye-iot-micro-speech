@@ -6,6 +6,9 @@ set(COMPONENT_SRCS
     "main.c"
     "../app/App.cpp"
 )
-set(COMPONENT_ADD_INCLUDEDIRS "../")
+set(COMPONENT_ADD_INCLUDEDIRS
+    "../"
+    "../platform/esp"
+)
 
 register_component()
