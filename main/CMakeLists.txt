@@ -2,7 +2,10 @@
 set(COMPONENT_REQUIRES )
 set(COMPONENT_PRIV_REQUIRES )
 
-set(COMPONENT_SRCS "main.c")
-set(COMPONENT_ADD_INCLUDEDIRS "")
+set(COMPONENT_SRCS
+    "main.c"
+    "../app/App.cpp"
+)
+set(COMPONENT_ADD_INCLUDEDIRS "../")
 
 register_component()
