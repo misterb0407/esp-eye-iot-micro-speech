@@ -5,6 +5,7 @@ set(COMPONENT_PRIV_REQUIRES )
 set(COMPONENT_SRCS
     "main.c"
     "../app/App.cpp"
+    "../platform/esp/os/OSWrapper.cpp"
 )
 set(COMPONENT_ADD_INCLUDEDIRS
     "../"
