@@ -14,7 +14,7 @@ static void controlTask(void* argument) {
     // TODO
     int i = 0;
     while (1) {
-        log("[%d] Hello world from control task!\n", i);
+        log("[%d] Hello world from controlTask!\n", i);
         i++;
         platform::os::OSWrapper::delay(5000);
     }
@@ -23,19 +23,40 @@ static void controlTask(void* argument) {
 static void ledTask(void* argument) {
     int i = 0;
     while (1) {
-        log("[%d] Hello world from led task!\n", i);
+        log("[%d] Hello world from ledTask!\n", i);
         i++;
         platform::os::OSWrapper::delay(7000);
     }
 }
 
+static void cloudTask(void* argument) {
+    int i = 0;
+    while (1) {
+        log("[%d] Hello world from cloudTask!\n", i);
+        i++;
+        platform::os::OSWrapper::delay(3000);
+    }
+}
+
+static void audimlTask(void* argument) {
+    int i = 0;
+    while (1) {
+        log("[%d] Hello world from audimlTask!\n", i);
+        i++;
+        platform::os::OSWrapper::delay(9000);
+    }
+}
+
 static void initTask() {
-    const uint16_t DEFAULT_STACK_SIZE = OSWrapper::getMinStackSize();
+    const uint16_t DEFAULT_STACK_SIZE = 2048U;
     const uint32_t TASK_PRIORITY_HIGHEST = OSWrapper::getMaxTaskPriority();
 
     const platform::os::TaskAttribute attr[] = {
-        {controlTask, "controlTask", DEFAULT_STACK_SIZE, nullptr, TASK_PRIORITY_HIGHEST},
-        {ledTask, "ledTask", DEFAULT_STACK_SIZE, nullptr, TASK_PRIORITY_HIGHEST}
+        {controlTask, "controlTask", 2*DEFAULT_STACK_SIZE, nullptr, TASK_PRIORITY_HIGHEST},
+        {ledTask, "ledTask", DEFAULT_STACK_SIZE, nullptr, TASK_PRIORITY_HIGHEST - 2},
+        {cloudTask, "cloudTask", 2*DEFAULT_STACK_SIZE, nullptr, TASK_PRIORITY_HIGHEST - 2},
+        {audimlTask, "audimlTask", 4U*DEFAULT_STACK_SIZE, nullptr, TASK_PRIORITY_HIGHEST - 2}
+
 
     };
 
