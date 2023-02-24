@@ -5,10 +5,14 @@ set(COMPONENT_PRIV_REQUIRES )
 set(COMPONENT_SRCS
     "main.c"
     "../app/App.cpp"
+    "../app/OSResourceSingleton.cpp"
+    "../app/MsgQ.cpp"
+    "../app/led/LED.cpp"
     "../platform/esp/os/OSWrapper.cpp"
 )
 set(COMPONENT_ADD_INCLUDEDIRS
     "../"
+    "../app"
     "../platform/esp"
 )
 

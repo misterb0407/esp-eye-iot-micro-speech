@@ -3,11 +3,27 @@
 
 // Project includes.
 #include "App.h"
+#include "Event.h"
+#include "OSResourceSingleton.h"
+#include "led/LED.h"
+
+// Platform includes.
 #include "log/Log.h"
 #include "os/OSWrapper.h"
 
 static void initQ() {
-    // TODO
+    auto controlQHandle = OSWrapper::createQueue(10, sizeof(app::Msg));
+    auto ledQHandle = OSWrapper::createQueue(3, sizeof(app::Msg));
+    auto cloudQHandle = OSWrapper::createQueue(10, sizeof(app::Msg));
+    auto audiomlQHandle = OSWrapper::createQueue(10, sizeof(app::Msg));
+
+    OSResourceSingleton& resources = OSResourceSingleton::getInstance();
+    using Id = app::OSResourceSingleton::Id;
+
+    resources.setQHandle(Id::ControlTask, controlQHandle);
+    resources.setQHandle(Id::LEDTask, ledQHandle);
+    resources.setQHandle(Id::CloudTask, cloudQHandle);
+    resources.setQHandle(Id::AudioMLTask, audiomlQHandle);
 }
 
 static void controlTask(void* argument) {
@@ -21,12 +37,12 @@ static void controlTask(void* argument) {
 }
 
 static void ledTask(void* argument) {
-    int i = 0;
-    while (1) {
-        log("[%d] Hello world from ledTask!\n", i);
-        i++;
-        platform::os::OSWrapper::delay(7000);
-    }
+    OSResourceSingleton& resources = OSResourceSingleton::getInstance();
+    using Id = app::OSResourceSingleton::Id;
+
+    static LED s_led(resources.getQHandle(Id::LEDTask));
+
+    s_led.run();
 }
 
 static void cloudTask(void* argument) {
@@ -56,8 +72,6 @@ static void initTask() {
         {ledTask, "ledTask", DEFAULT_STACK_SIZE, nullptr, TASK_PRIORITY_HIGHEST - 2},
         {cloudTask, "cloudTask", 2*DEFAULT_STACK_SIZE, nullptr, TASK_PRIORITY_HIGHEST - 2},
         {audimlTask, "audimlTask", 4U*DEFAULT_STACK_SIZE, nullptr, TASK_PRIORITY_HIGHEST - 2}
-
-
     };
 
     const size_t TASK_COUNT = sizeof(attr)/sizeof(attr[0]);
