@@ -7,6 +7,7 @@
 #include "OSResourceSingleton.h"
 #include "led/LED.h"
 #include "control/Control.h"
+#include "cloud/Cloud.h"
 
 // Platform includes.
 #include "log/Log.h"
@@ -46,12 +47,12 @@ static void ledTask(void* argument) {
 }
 
 static void cloudTask(void* argument) {
-    int i = 0;
-    while (1) {
-        log("[%d] Hello world from cloudTask!\n", i);
-        i++;
-        platform::os::OSWrapper::delay(3000);
-    }
+    OSResourceSingleton& resources = OSResourceSingleton::getInstance();
+    using Id = app::OSResourceSingleton::Id;
+
+    static Cloud s_cloud(resources.getQHandle(Id::CloudTask));
+
+    s_cloud.run();
 }
 
 static void audimlTask(void* argument) {

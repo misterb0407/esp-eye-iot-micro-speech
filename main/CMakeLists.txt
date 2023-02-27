@@ -9,6 +9,7 @@ set(COMPONENT_SRCS
     "../app/MsgQ.cpp"
     "../app/led/LED.cpp"
     "../app/control/Control.cpp"
+    "../app/cloud/Cloud.cpp"
     "../platform/esp/os/OSWrapper.cpp"
 )
 set(COMPONENT_ADD_INCLUDEDIRS

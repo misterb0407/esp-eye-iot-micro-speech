@@ -1,5 +1,5 @@
-#ifndef LED_H
-#define LED_H
+#ifndef APP_LED_H
+#define APP_LED_H
 
 // Project includes.
 #include "Event.h"
@@ -57,4 +57,4 @@ private:
 
 using app::led::LED;
 
-#endif // LED_H
+#endif // APP_LED_H

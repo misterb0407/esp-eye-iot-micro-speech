@@ -1,5 +1,5 @@
-#ifndef APP_CONTROL_H
-#define APP_CONTROL_H
+#ifndef APP_CLOUD_H
+#define APP_CLOUD_H
 
 // Project includes.
 #include "Event.h"
@@ -9,17 +9,17 @@
 #include "os/OSWrapper.h"
 
 namespace app {
-namespace control {
+namespace cloud {
 
-class Control {
+class Cloud {
 public:
-    Control() = delete;
-    explicit Control(QHandle rxQHandle);
-    ~Control() = default;
+    Cloud() = delete;
+    explicit Cloud(QHandle rxQHandle);
+    ~Cloud() = default;
 
     // No copy allowed
-    Control(const Control& other) = delete;
-    Control& operator=(const Control& other) = delete;
+    Cloud(const Cloud& other) = delete;
+    Cloud& operator=(const Cloud& other) = delete;
 
     void run();
 
@@ -39,8 +39,8 @@ private:
 };
 
 } // namespace app
-} // namespace control
+} // namespace cloud
 
-using app::control::Control;
+using app::cloud::Cloud;
 
-#endif // APP_CONTROL_H
+#endif // APP_CLOUD_H
