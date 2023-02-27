@@ -8,6 +8,7 @@
 #include "led/LED.h"
 #include "control/Control.h"
 #include "cloud/Cloud.h"
+#include "audioml/AudioML.h"
 
 // Platform includes.
 #include "log/Log.h"
@@ -56,12 +57,12 @@ static void cloudTask(void* argument) {
 }
 
 static void audimlTask(void* argument) {
-    int i = 0;
-    while (1) {
-        log("[%d] Hello world from audimlTask!\n", i);
-        i++;
-        platform::os::OSWrapper::delay(9000);
-    }
+    OSResourceSingleton& resources = OSResourceSingleton::getInstance();
+    using Id = app::OSResourceSingleton::Id;
+
+    static AudioML s_audioml(resources.getQHandle(Id::CloudTask));
+
+    s_audioml.run();
 }
 
 static void initTask() {
