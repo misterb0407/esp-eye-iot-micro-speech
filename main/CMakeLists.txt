@@ -8,6 +8,7 @@ set(COMPONENT_SRCS
     "../app/OSResourceSingleton.cpp"
     "../app/MsgQ.cpp"
     "../app/led/LED.cpp"
+    "../app/control/Control.cpp"
     "../platform/esp/os/OSWrapper.cpp"
 )
 set(COMPONENT_ADD_INCLUDEDIRS

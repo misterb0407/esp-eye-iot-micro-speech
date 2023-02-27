@@ -6,6 +6,7 @@
 #include "Event.h"
 #include "OSResourceSingleton.h"
 #include "led/LED.h"
+#include "control/Control.h"
 
 // Platform includes.
 #include "log/Log.h"
@@ -27,13 +28,12 @@ static void initQ() {
 }
 
 static void controlTask(void* argument) {
-    // TODO
-    int i = 0;
-    while (1) {
-        log("[%d] Hello world from controlTask!\n", i);
-        i++;
-        platform::os::OSWrapper::delay(5000);
-    }
+    OSResourceSingleton& resources = OSResourceSingleton::getInstance();
+    using Id = app::OSResourceSingleton::Id;
+
+    static Control s_control(resources.getQHandle(Id::ControlTask));
+
+    s_control.run();
 }
 
 static void ledTask(void* argument) {
