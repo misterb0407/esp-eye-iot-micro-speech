@@ -24,12 +24,18 @@ public:
     void run();
 
 private:
+    // Consult datasheet for the associated LED GPIO number.
+    static const uint32_t RED_LED_GPIO_NUM = 21U;
+    static const uint32_t WHITE_LED_GPIO_NUM = 22U;
+
     enum class State : uint8_t {
         Init,
         ConnectingToCloud,
+        Normal,
         PublishingToCloud,
         Error,
-        Sleep
+        Sleep,
+        Invalid
     };
 
     // State management.
@@ -45,7 +51,6 @@ private:
     void handleStateSleep(const app::Msg& msg);
 
     MsgQ m_rxMsgQ;
-    MsgQ m_txMsgQSocIfc;
 
     // State mamagement.
     State m_currentState;

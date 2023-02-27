@@ -3,13 +3,14 @@
 
 // Platform includes.
 #include "log/Log.h"
+#include "gpio/GPIO.h"
 
 using namespace app;
+using namespace platform::gpio;
 
 LED::LED(QHandle rxQHandle):
     m_rxMsgQ(rxQHandle),
-    m_txMsgQSocIfc(nullptr),
-    m_currentState(State::Init),
+    m_currentState(State::Invalid),
     m_nextState(State::Init)
 {}
 
@@ -21,7 +22,7 @@ void LED::run() {
     }
 }
 
-void LED::runStateMachine(const app::Msg& msg) {
+void LED::runStateMachine(const Msg& msg) {
     switch (m_currentState) {
         case State::Init:
             handleStateInit(msg);
@@ -55,27 +56,35 @@ void LED::onExitState(const State state) {
 }
 
 void LED::onEnterState(const State state) {
-    // TODO
-    (void)state;
+    switch (state) {
+        case State::Init:
+            GPIO::setOutDirection(RED_LED_GPIO_NUM);
+            GPIO::setOutDirection(WHITE_LED_GPIO_NUM);
+
+            GPIO::set(RED_LED_GPIO_NUM);
+            GPIO::set(WHITE_LED_GPIO_NUM);
+            break;
+        default:
+            break;
+    }
 }
 
-void LED::handleStateInit(const app::Msg& msg) {
-    // TODO
-    log("Hello world LED state init!\n");
-}
-
-void LED::handleStateConnectingToCloud(const app::Msg& msg) {
-    // TODO
-}
-
-void LED::handleStatePublishingToCloud(const app::Msg& msg) {
-    // TODO
-}
-
-void LED::handleStateError(const app::Msg& msg) {
+void LED::handleStateInit(const Msg& msg) {
     // TODO
 }
 
-void LED::handleStateSleep(const app::Msg& msg) {
+void LED::handleStateConnectingToCloud(const Msg& msg) {
+    // TODO
+}
+
+void LED::handleStatePublishingToCloud(const Msg& msg) {
+    // TODO
+}
+
+void LED::handleStateError(const Msg& msg) {
+    // TODO
+}
+
+void LED::handleStateSleep(const Msg& msg) {
     // TODO
 }
