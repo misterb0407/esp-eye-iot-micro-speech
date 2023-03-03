@@ -3,10 +3,10 @@
 
 // Platform includes.
 #include "log/Log.h"
-#include "gpio/GPIO.h"
+#include "peripheral/gpio/GPIO.h"
 
 using namespace app;
-using namespace platform::gpio;
+using namespace platform::peripheral::gpio;
 
 LED::LED(QHandle rxQHandle):
     m_rxMsgQ(rxQHandle),

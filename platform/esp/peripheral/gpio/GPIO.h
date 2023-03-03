@@ -5,6 +5,7 @@
 #include <cstdint>
 
 namespace platform {
+namespace peripheral {
 namespace gpio {
 
 class GPIO {
@@ -21,8 +22,9 @@ public:
 };
 
 } // namespace platform
+} // namespace peripheral
 } // namespace gpio
 
-using platform::gpio::GPIO;
+using platform::peripheral::gpio::GPIO;
 
 #endif // GPIO_WRAPPER_H

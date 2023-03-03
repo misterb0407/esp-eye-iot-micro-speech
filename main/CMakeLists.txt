@@ -12,7 +12,7 @@ set(COMPONENT_SRCS
     "../app/cloud/Cloud.cpp"
     "../app/audioml/AudioML.cpp"
     "../platform/esp/os/OSWrapper.cpp"
-    "../platform/esp/gpio/GPIO.cpp"
+    "../platform/esp/peripheral/gpio/GPIO.cpp"
 )
 set(COMPONENT_ADD_INCLUDEDIRS
     "../"
