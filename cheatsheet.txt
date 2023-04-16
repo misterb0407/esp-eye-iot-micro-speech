@@ -1,0 +1,4 @@
+ To run idf in docker in interactive mode:
+ $docker run --rm -v $PWD:/project -w /project -it espressif/idf:release-v5.1
+
+ Then edit the code on separate email.
