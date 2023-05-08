@@ -34,6 +34,9 @@ private:
     void onExitState(const State state);
     void onEnterState(const State state);
 
+    // Private helpers
+    bool connectToWifi();
+
     // TODO
     MsgQ m_rxMsgQ;
 };
