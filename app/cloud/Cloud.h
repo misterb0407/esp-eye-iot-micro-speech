@@ -25,8 +25,11 @@ public:
 
 private:
     enum class State : uint8_t {
-        Init
-        // TODO
+        Init,
+        ConnectingToWifi,
+        ConnectingToCloud,
+        Running,
+        Invalid
     };
 
     // State management.
@@ -34,11 +37,15 @@ private:
     void onExitState(const State state);
     void onEnterState(const State state);
 
+    // State handles
+    void handleStateConnectingToWifi(const app::Msg& msg);
+
     // Private helpers
     bool connectToWifi();
 
-    // TODO
     MsgQ m_rxMsgQ;
+    State m_currentState;
+    State m_nextState;
 };
 
 } // namespace app

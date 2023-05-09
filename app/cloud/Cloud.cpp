@@ -14,32 +14,23 @@
 // Platform includes.
 #include "log/Log.h"
 
+// Project includes.
+#include "OSResourceSingleton.h"
+
 using namespace app;
 
-static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
-    // TODO: to send event wifi connection/disconnection to Control task.
-    if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
-        log("Connecting to wifi ssid %s\n", CONFIG_ESP_WIFI_SSID);
-        esp_wifi_connect();
-    }
-    else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
-        log("ERROR: Not able to connect to wifi %s\n", CONFIG_ESP_WIFI_SSID);
-    }
-    else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
-        ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
-        log("got ip:" IPSTR, IP2STR(&event->ip_info.ip));
-    }
-        else { /* Do nothing*/}
-}
+static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);
+
 
 Cloud::Cloud(QHandle rxQHandle):
-    m_rxMsgQ(rxQHandle)
+    m_rxMsgQ(rxQHandle),
+    m_currentState(State::Invalid),
+    m_nextState(State::Init)
 {}
 
 void Cloud::run() {
     Msg msg = {EventId::Invalid, nullptr, 0U};
 
-    connectToWifi();
     for (;;) {
         runStateMachine(msg);
         m_rxMsgQ.get(&msg);
@@ -47,12 +38,23 @@ void Cloud::run() {
 }
 
 void Cloud::runStateMachine(const app::Msg& msg) {
-    // TODO
-    int i = 0;
-    while (1) {
-        log("[%d] Hello world from cloudTask!\n", i);
-        i++;
-        platform::os::OSWrapper::delay(3000);
+    switch(m_currentState) {
+        case State::Init:
+            break;
+        case State::ConnectingToWifi:
+            handleStateConnectingToWifi(msg);
+            break;
+        case State::ConnectingToCloud:
+            // TODO
+            break;
+        default:
+            break;
+    };
+
+    if(m_currentState != m_nextState) {
+        onExitState(m_currentState);
+        onEnterState(m_nextState);
+        m_currentState = m_nextState;
     }
 }
 
@@ -61,7 +63,17 @@ void Cloud::onExitState(const State state) {
 }
 
 void Cloud::onEnterState(const State state) {
-    (void)state; // TODO
+    switch(state) {
+        case State::Init:
+            connectToWifi();
+            m_nextState = State::ConnectingToWifi;
+            break;
+        case State::ConnectingToCloud:
+            // TODO
+            break;
+        default:
+            break;
+    }
 }
 
 bool Cloud::connectToWifi() {
@@ -113,13 +125,45 @@ bool Cloud::connectToWifi() {
             .failure_retry_cnt = 3
         }
     };
-    //wifi_config.ap.ssid = CONFIG_ESP_WIFI_SSID; // error here, TODO: debug
+
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA) );
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config) );
     ESP_ERROR_CHECK(esp_wifi_start() );
 
-    platform::os::OSWrapper::delay(3000); // Wait for it to connect, TODO: by event driven
-
     return true;
 }
 
+void Cloud::handleStateConnectingToWifi(const app::Msg& msg) {
+    switch(msg.ev) {
+    case EventId::WifiConnected:
+        log("wifi connected");
+        break;
+    case EventId::WifiDisconnected:
+        log("Wifi disconnected");
+        break;
+    default:
+        break;
+    }
+}
+
+// Wifi event handler (callback).
+static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
+    OSResourceSingleton& resources = OSResourceSingleton::getInstance();
+    using Id = app::OSResourceSingleton::Id;
+    MsgQ qMsg(resources.getQHandle(Id::CloudTask));
+
+    if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
+        log("Connecting to wifi ssid %s\n", CONFIG_ESP_WIFI_SSID);
+        esp_wifi_connect();
+    }
+    else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
+        // TODO: do error handling e.g. retry
+        log("ERROR: Not able to connect to wifi %s\n", CONFIG_ESP_WIFI_SSID);
+    }
+    else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
+        qMsg.set({EventId::WifiConnected, nullptr, 0U});
+        ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
+        log("\nwifi AP ip addr:" IPSTR, IP2STR(&event->ip_info.ip));
+    }
+        else { /* Do nothing*/}
+}

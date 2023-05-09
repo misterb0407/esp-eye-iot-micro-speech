@@ -6,6 +6,8 @@
 namespace app {
 enum class EventId : uint8_t {
     Invalid = 0,
+    WifiConnected,
+    WifiDisconnected
     // TODO
 };
 
