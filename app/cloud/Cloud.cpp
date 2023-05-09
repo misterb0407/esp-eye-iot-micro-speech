@@ -24,6 +24,7 @@ static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_
 
 Cloud::Cloud(QHandle rxQHandle):
     m_rxMsgQ(rxQHandle),
+    m_controlMsgQ(OSResourceSingleton::getInstance().getQHandle(app::OSResourceSingleton::Id::ControlTask)),
     m_currentState(State::Invalid),
     m_nextState(State::Init)
 {}
@@ -136,10 +137,10 @@ bool Cloud::connectToWifi() {
 void Cloud::handleStateConnectingToWifi(const app::Msg& msg) {
     switch(msg.ev) {
     case EventId::WifiConnected:
-        log("wifi connected");
+        m_controlMsgQ.set(msg); // forward it to control.
         break;
     case EventId::WifiDisconnected:
-        log("Wifi disconnected");
+        m_controlMsgQ.set(msg); // forward it to control.
         break;
     default:
         break;

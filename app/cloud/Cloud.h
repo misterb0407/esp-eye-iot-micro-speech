@@ -44,6 +44,8 @@ private:
     bool connectToWifi();
 
     MsgQ m_rxMsgQ;
+    MsgQ m_controlMsgQ;
+
     State m_currentState;
     State m_nextState;
 };

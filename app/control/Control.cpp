@@ -19,12 +19,15 @@ void Control::run() {
 }
 
 void Control::runStateMachine(const app::Msg& msg) {
-    // TODO
-    int i = 0;
-    while (1) {
-        log("[%d] Hello world from controlTask!\n", i);
-        i++;
-        platform::os::OSWrapper::delay(5000);
+    switch(msg.ev) {
+        case EventId::WifiConnected:
+            log("rcvd event: wifi connected\n");
+            break;
+        case EventId::WifiDisconnected:
+            log("rcvd event: wifi connected\n");
+            break;
+        default:
+            break;
     }
 }
 
