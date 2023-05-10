@@ -13,6 +13,7 @@ set(COMPONENT_SRCS
     "../app/audioml/AudioML.cpp"
     "../platform/esp/os/OSWrapper.cpp"
     "../platform/esp/peripheral/gpio/GPIO.cpp"
+    "../platform/esp/com/wifi/Wifi.cpp"
 )
 set(COMPONENT_ADD_INCLUDEDIRS
     "../"
