@@ -47,7 +47,7 @@ void Cloud::runStateMachine(const app::Msg& msg) {
             handleStateConnectingToWifi(msg);
             break;
         case State::ConnectingToCloud:
-            // TODO
+            handleStateConnectingToCloud(msg);
             break;
         default:
             break;
@@ -65,35 +65,33 @@ void Cloud::onExitState(const State state) {
 }
 
 void Cloud::onEnterState(const State state) {
+    Wifi wifi(wifi_status_callback);
     switch(state) {
         case State::Init:
-            connectToWifi();
+            wifi.connect();
             m_nextState = State::ConnectingToWifi;
-            break;
-        case State::ConnectingToCloud:
-            // TODO
             break;
         default:
             break;
     }
 }
 
-
-bool Cloud::connectToWifi() {
-    Wifi wifi(wifi_status_callback);
-    return wifi.connect();
-}
-
 void Cloud::handleStateConnectingToWifi(const app::Msg& msg) {
     switch(msg.ev) {
     case EventId::WifiConnected:
+        m_nextState = State::ConnectingToCloud;
         m_controlMsgQ.set(msg); // forward it to control.
         break;
     case EventId::WifiDisconnected:
         m_controlMsgQ.set(msg); // forward it to control.
+        // TODO: error handling
         break;
     default:
         break;
     }
+}
+
+void Cloud::handleStateConnectingToCloud(const app::Msg& msg) {
+    // TODO
 }
 
