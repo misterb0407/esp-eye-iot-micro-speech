@@ -41,6 +41,9 @@ private:
     void handleStateConnectingToWifi(const app::Msg& msg);
     void handleStateConnectingToCloud(const app::Msg& msg);
 
+    // Private helper
+    void connectToCloud();
+
     MsgQ m_rxMsgQ;
     MsgQ m_controlMsgQ;
 
