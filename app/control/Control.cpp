@@ -19,7 +19,7 @@ void Control::run() {
 }
 
 void Control::handle(const app::Msg& msg) {
-    log("control task: receive event %s(%d)\n", toString(msg.ev), static_cast<int>(msg.ev));
+    log("control: %s(%d) event received\n", toString(msg.ev), static_cast<int>(msg.ev));
 
     switch(msg.ev) {
         case EventId::WifiConnected:
