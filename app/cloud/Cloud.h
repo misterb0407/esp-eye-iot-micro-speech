@@ -24,31 +24,12 @@ public:
     void run();
 
 private:
-    enum class State : uint8_t {
-        Init,
-        ConnectingToWifi,
-        ConnectingToCloud,
-        Running,
-        Invalid
-    };
-
-    // State management.
-    void runStateMachine(const app::Msg& msg);
-    void onExitState(const State state);
-    void onEnterState(const State state);
-
-    // State handles
-    void handleStateConnectingToWifi(const app::Msg& msg);
-    void handleStateConnectingToCloud(const app::Msg& msg);
-
     // Private helper
+    void handle(const app::Msg& msg);
     void connectToCloud();
 
     MsgQ m_rxMsgQ;
     MsgQ m_controlMsgQ;
-
-    State m_currentState;
-    State m_nextState;
 };
 
 } // namespace app
