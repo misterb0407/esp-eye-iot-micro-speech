@@ -1,6 +1,9 @@
 #ifndef APP_CONTROL_H
 #define APP_CONTROL_H
 
+// Standard includes
+#include <map>
+
 // Project includes.
 #include "Event.h"
 #include "MsgQ.h"
@@ -24,8 +27,16 @@ public:
     void run();
 
 private:
-    // State management.
+    std::map<const EventId, const char*> m_mapStrEventId = {
+        {EventId::WifiConnected, "WifiConnected"},
+        {EventId::WifiDisconnected, "WifiDisconnected"},
+        {EventId::CloudConnected, "CloudConnected"},
+        {EventId::CloudDisconnected, "CloudDisonnected"},
+    };
+
+    // Private helpes
     void handle(const app::Msg& msg);
+    const char* toString(EventId event) const;
 
     MsgQ m_rxMsgQ;
 };

@@ -19,21 +19,29 @@ void Control::run() {
 }
 
 void Control::handle(const app::Msg& msg) {
+    log("control task: receive event %s(%d)\n", toString(msg.ev), static_cast<int>(msg.ev));
+
     switch(msg.ev) {
         case EventId::WifiConnected:
-            log("rcvd event: wifi connected\n");
+            // TODO: forward to LED
             break;
         case EventId::WifiDisconnected:
-            log("rcvd event: wifi connected\n");
+            // TODO: forward to LED
             break;
         case EventId::CloudConnected:
-            log("rcvd event: cloud connected\n");
+            // TODO: forward to LED
             break;
         case EventId::CloudDisconnected:
-            log("rcvd event: cloud disconnected\n");
+            // TODO: forward to LED
             break;
         default:
             break;
     }
+}
+
+const char* Control::toString(EventId event) const {
+    auto it = m_mapStrEventId.find(event);
+
+    return (it != m_mapStrEventId.end()) ? it->second : "";
 }
 
