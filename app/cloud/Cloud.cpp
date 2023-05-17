@@ -118,6 +118,7 @@ void Cloud::run() {
 void Cloud::handle(const app::Msg& msg) {
     switch(msg.ev) {
     case EventId::WifiConnected:
+        m_controlMsgQ.set(msg); // forward it to control.
         connectToCloud();
         break;
     case EventId::WifiDisconnected:
