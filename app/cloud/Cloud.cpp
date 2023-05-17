@@ -41,12 +41,17 @@ static void log_error_if_nonzero(const char *message, int error_code) {
 }
 
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data) {
+    OSResourceSingleton& resources = OSResourceSingleton::getInstance();
+    using Id = app::OSResourceSingleton::Id;
+    MsgQ qMsg(resources.getQHandle(Id::CloudTask));
+
     esp_mqtt_event_handle_t event = (esp_mqtt_event_handle_t)event_data;
     esp_mqtt_client_handle_t client = event->client;
     int msg_id;
 
     switch ((esp_mqtt_event_id_t)event_id) {
         case MQTT_EVENT_CONNECTED:
+            qMsg.set({EventId::CloudConnected, nullptr, 0U});
             log("MQTT_EVENT_CONNECTED");
             msg_id = esp_mqtt_client_subscribe(client, "/topic/qos0", 0);
             log("sent subscribe successful, msg_id=%d", msg_id);
@@ -58,6 +63,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
             log("sent unsubscribe successful, msg_id=%d", msg_id);
             break;
         case MQTT_EVENT_DISCONNECTED:
+            qMsg.set({EventId::CloudDisconnected, nullptr, 0U});
             log("MQTT_EVENT_DISCONNECTED");
             break;
         case MQTT_EVENT_SUBSCRIBED:
@@ -117,6 +123,13 @@ void Cloud::handle(const app::Msg& msg) {
     case EventId::WifiDisconnected:
         m_controlMsgQ.set(msg); // forward it to control.
         // TODO: error handling
+        break;
+    case EventId::CloudConnected:
+        m_controlMsgQ.set(msg); // forward it to control.
+        break;
+    case EventId::CloudDisconnected:
+        m_controlMsgQ.set(msg); // forward it to control.
+        // TODO: error handling.
         break;
     default:
         break;

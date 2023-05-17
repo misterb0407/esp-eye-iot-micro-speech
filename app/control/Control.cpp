@@ -26,6 +26,12 @@ void Control::runStateMachine(const app::Msg& msg) {
         case EventId::WifiDisconnected:
             log("rcvd event: wifi connected\n");
             break;
+        case EventId::CloudConnected:
+            log("rcvd event: cloud connected\n");
+            break;
+        case EventId::CloudDisconnected:
+            log("rcvd event: cloud disconnected\n");
+            break;
         default:
             break;
     }
