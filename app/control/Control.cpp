@@ -13,12 +13,12 @@ Control::Control(QHandle rxQHandle):
 void Control::run() {
     Msg msg = {EventId::Invalid, nullptr, 0U};
     for (;;) {
-        runStateMachine(msg);
         m_rxMsgQ.get(&msg);
+        handle(msg);
     }
 }
 
-void Control::runStateMachine(const app::Msg& msg) {
+void Control::handle(const app::Msg& msg) {
     switch(msg.ev) {
         case EventId::WifiConnected:
             log("rcvd event: wifi connected\n");
@@ -37,12 +37,3 @@ void Control::runStateMachine(const app::Msg& msg) {
     }
 }
 
-void Control::onExitState(const State state) {
-    // TODO.
-    (void)state;
-}
-
-void Control::onEnterState(const State state) {
-    // TODO
-    (void)state;
-}

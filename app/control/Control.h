@@ -24,17 +24,9 @@ public:
     void run();
 
 private:
-    enum class State : uint8_t {
-        Init
-        // TODO
-    };
-
     // State management.
-    void runStateMachine(const app::Msg& msg);
-    void onExitState(const State state);
-    void onEnterState(const State state);
+    void handle(const app::Msg& msg);
 
-    // TODO
     MsgQ m_rxMsgQ;
 };
 
