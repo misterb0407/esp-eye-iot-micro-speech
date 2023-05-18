@@ -4,6 +4,9 @@
 // Project includes.
 #include "Event.h"
 #include "MsgQ.h"
+#include "com/wifi/Wifi.h"
+#include "com/mqtt/MqttClient.h"
+
 
 // Platform includes.
 #include "os/OSWrapper.h"
@@ -30,6 +33,8 @@ private:
 
     MsgQ m_rxMsgQ;
     MsgQ m_controlMsgQ;
+    Wifi m_wifi;
+    MqttClient m_mqtt;
 };
 
 } // namespace app

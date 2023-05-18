@@ -14,6 +14,7 @@ set(COMPONENT_SRCS
     "../platform/esp/os/OSWrapper.cpp"
     "../platform/esp/peripheral/gpio/GPIO.cpp"
     "../platform/esp/com/wifi/Wifi.cpp"
+    "../platform/esp/com/mqtt/MqttClient.cpp"
 )
 set(COMPONENT_ADD_INCLUDEDIRS
     "../"
