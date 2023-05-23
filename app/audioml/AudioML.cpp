@@ -1,5 +1,6 @@
 // Project includes.
 #include "AudioML.h"
+#include "hello-world/main_functions.h"
 
 // Platform includes.
 #include "log/Log.h"
@@ -12,6 +13,7 @@ AudioML::AudioML(QHandle rxQHandle):
 
 void AudioML::run() {
     Msg msg = {EventId::Invalid, nullptr, 0U};
+
     for (;;) {
         runStateMachine(msg);
         m_rxMsgQ.get(&msg);
@@ -20,10 +22,9 @@ void AudioML::run() {
 
 void AudioML::runStateMachine(const app::Msg& msg) {
     // TODO
-    int i = 0;
+    setup();
     while (1) {
-        log("[%d] Hello world from audiomlTask!\n", i);
-        i++;
+        loop();
         platform::os::OSWrapper::delay(3000);
     }
 }
