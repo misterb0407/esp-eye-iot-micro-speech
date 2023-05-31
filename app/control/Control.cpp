@@ -3,11 +3,13 @@
 
 // Platform includes.
 #include "log/Log.h"
+#include "OSResourceSingleton.h"
 
 using namespace app;
 
 Control::Control(QHandle rxQHandle):
-    m_rxMsgQ(rxQHandle)
+    m_rxMsgQ(rxQHandle),
+    m_ledInbox(OSResourceSingleton::getInstance().getQHandle(app::OSResourceSingleton::Id::LEDTask))
 {}
 
 void Control::run() {
@@ -23,16 +25,19 @@ void Control::handle(const app::Msg& msg) {
 
     switch(msg.ev) {
         case EventId::WifiConnected:
-            // TODO: forward to LED
+            m_ledInbox.set(msg);
             break;
         case EventId::WifiDisconnected:
-            // TODO: forward to LED
+            m_ledInbox.set(msg);
             break;
         case EventId::CloudConnected:
-            // TODO: forward to LED
+            m_ledInbox.set(msg);
             break;
         case EventId::CloudDisconnected:
-            // TODO: forward to LED
+            m_ledInbox.set(msg);
+            break;
+        case EventId::DataPublishedToCloud:
+            m_ledInbox.set(msg);
             break;
         default:
             break;

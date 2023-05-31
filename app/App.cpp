@@ -16,7 +16,7 @@
 
 static void initQ() {
     auto controlQHandle = OSWrapper::createQueue(10, sizeof(app::Msg));
-    auto ledQHandle = OSWrapper::createQueue(3, sizeof(app::Msg));
+    auto ledQHandle = OSWrapper::createQueue(5, sizeof(app::Msg));
     auto cloudQHandle = OSWrapper::createQueue(10, sizeof(app::Msg));
     auto audiomlQHandle = OSWrapper::createQueue(10, sizeof(app::Msg));
 

@@ -39,6 +39,7 @@ private:
     const char* toString(EventId event) const;
 
     MsgQ m_rxMsgQ;
+    MsgQ m_ledInbox;
 };
 
 } // namespace app

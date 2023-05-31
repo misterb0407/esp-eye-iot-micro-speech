@@ -61,8 +61,9 @@ void Cloud::handle(const app::Msg& msg) {
         // TODO: error handling
         break;
     case EventId::CloudConnected:
-        m_mqtt.publish("/topic/startup", "hello master Babang/Sunil, how I may serve you?");
         m_controlMsgQ.set(msg); // forward it to control.
+        m_mqtt.publish("/topic/startup", "hello master Babang/Sunil, how I may serve you?");
+        m_controlMsgQ.set({EventId::DataPublishedToCloud, nullptr, 0U});
         break;
     case EventId::CloudDisconnected:
         m_controlMsgQ.set(msg); // forward it to control.

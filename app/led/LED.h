@@ -28,14 +28,22 @@ private:
     static const uint32_t RED_LED_GPIO_NUM = 21U;
     static const uint32_t WHITE_LED_GPIO_NUM = 22U;
 
+    /*
+     * Max duration this task is blocked when no incoming msg, ensure
+     * it is smaller than the LED blinking rate.
+     */
+    static const uint32_t TASK_RATE_MS = 50U;
+    // LED blinking rate
+    static const uint32_t CONNECTING_TO_WIRELESS_BLINK_RATE_MS = 100U;
+    static const uint32_t CONNECTING_TO_CLOUD_BLINK_RATE_MS = 500U;
+    static const uint32_t PUBLISHING_TO_CLOUD_BLINK_DURATION_MS = 1000U;
+
     enum class State : uint8_t {
-        Init,
+        ConnectingToWireless,
         ConnectingToCloud,
         Normal,
         PublishingToCloud,
-        Error,
-        Sleep,
-        Invalid
+        Error
     };
 
     // State management.
@@ -44,11 +52,16 @@ private:
     void onEnterState(const State state);
 
     // State handlers.
-    void handleStateInit(const app::Msg& msg);
+    void handleStateConnectingToWireless(const app::Msg& msg);
     void handleStateConnectingToCloud(const app::Msg& msg);
+    void handleStateNormal(const app::Msg& msg);
     void handleStatePublishingToCloud(const app::Msg& msg);
     void handleStateError(const app::Msg& msg);
     void handleStateSleep(const app::Msg& msg);
+
+    // Private helpers
+    void turnRed(bool isOn);
+    void turnWhite(bool isOn);
 
     MsgQ m_rxMsgQ;
 

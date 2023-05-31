@@ -9,7 +9,8 @@ enum class EventId : uint8_t {
     WifiConnected,
     WifiDisconnected,
     CloudConnected,
-    CloudDisconnected
+    CloudDisconnected,
+    DataPublishedToCloud
 };
 
 // Message is event with payload.
