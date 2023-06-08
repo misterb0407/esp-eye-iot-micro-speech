@@ -1,68 +1,47 @@
-// Standard includes.
-#include <stdio.h>
+// Standard includes
+#include <memory>
+
 
 // Project includes.
 #include "App.h"
-#include "Event.h"
-#include "OSResourceSingleton.h"
-#include "led/LED.h"
+#include "MsgInbox.h"
+#include "SysResMgmtSingleton.h"
 #include "control/Control.h"
-#include "cloud/Cloud.h"
+#include "led/LED.h"
+#include "cloud/Cloud.cpp"
 #include "audioml/AudioML.h"
 
-// Platform includes.
-#include "log/Log.h"
-#include "os/OSWrapper.h"
-
-static void initQ() {
-    auto controlQHandle = OSWrapper::createQueue(10, sizeof(app::Msg));
-    auto ledQHandle = OSWrapper::createQueue(5, sizeof(app::Msg));
-    auto cloudQHandle = OSWrapper::createQueue(10, sizeof(app::Msg));
-    auto audiomlQHandle = OSWrapper::createQueue(10, sizeof(app::Msg));
-
-    OSResourceSingleton& resources = OSResourceSingleton::getInstance();
-    using Id = app::OSResourceSingleton::Id;
-
-    resources.setQHandle(Id::ControlTask, controlQHandle);
-    resources.setQHandle(Id::LEDTask, ledQHandle);
-    resources.setQHandle(Id::CloudTask, cloudQHandle);
-    resources.setQHandle(Id::AudioMLTask, audiomlQHandle);
+static void initResources() {
+    auto inbox = std::make_shared<MsgInbox>(10);
+    auto control = std::make_shared<Control>(inbox);
+    SysResMgmtSingleton::getInstance().setControl(control);
 }
 
 static void controlTask(void* argument) {
-    OSResourceSingleton& resources = OSResourceSingleton::getInstance();
-    using Id = app::OSResourceSingleton::Id;
-
-    static Control s_control(resources.getQHandle(Id::ControlTask));
-
-    s_control.run();
+    auto control = SysResMgmtSingleton::getInstance().getControl();
+    control->run();
 }
 
 static void ledTask(void* argument) {
-    OSResourceSingleton& resources = OSResourceSingleton::getInstance();
-    using Id = app::OSResourceSingleton::Id;
+    auto inbox = std::make_shared<MsgInbox>(5);
+    auto control = SysResMgmtSingleton::getInstance().getControl();
+    LED led(inbox, control);
+    led.run();
 
-    static LED s_led(resources.getQHandle(Id::LEDTask));
-
-    s_led.run();
 }
 
 static void cloudTask(void* argument) {
-    OSResourceSingleton& resources = OSResourceSingleton::getInstance();
-    using Id = app::OSResourceSingleton::Id;
-
-    static Cloud s_cloud(resources.getQHandle(Id::CloudTask));
-
-    s_cloud.run();
+    auto inbox = std::make_shared<MsgInbox>(10);
+    auto control = SysResMgmtSingleton::getInstance().getControl();
+    Cloud cloud(inbox, control);
+    cloud.run();
 }
 
 static void audimlTask(void* argument) {
-    OSResourceSingleton& resources = OSResourceSingleton::getInstance();
-    using Id = app::OSResourceSingleton::Id;
-
-    static AudioML s_audioml(resources.getQHandle(Id::CloudTask));
-
-    s_audioml.run();
+    auto inbox = std::make_shared<MsgInbox>(10);
+    auto control = SysResMgmtSingleton::getInstance().getControl();
+    AudioML audioml(inbox, control);
+    audioml.run();
 }
 
 static void initTask() {
@@ -84,6 +63,6 @@ static void initTask() {
 }
 
 void APP_Init() {
-    initQ();
+    initResources();
     initTask();
 }

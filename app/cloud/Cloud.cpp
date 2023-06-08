@@ -6,46 +6,45 @@
 
 // Project includes.
 #include "Cloud.h"
-#include "OSResourceSingleton.h"
+#include "SysResMgmtSingleton.h"
 
 using namespace app;
 
 namespace {
 // callback when platform feedback about the wifi connection status
 void wifi_status_callback(bool isConnected) {
-    OSResourceSingleton& resources = OSResourceSingleton::getInstance();
-    using Id = app::OSResourceSingleton::Id;
-    MsgQ qMsg(resources.getQHandle(Id::CloudTask));
-
     auto event = (isConnected) ? EventId::WifiConnected : EventId::WifiDisconnected;
-    qMsg.set({event, nullptr, 0U});
+    auto control = SysResMgmtSingleton::getInstance().getControl();
+    control->set({event, nullptr, 0});
 }
 
 // callback when platform feedback about the mqtt connection status
 void mqtt_status_callback(bool isConnected) {
-    OSResourceSingleton& resources = OSResourceSingleton::getInstance();
-    using Id = app::OSResourceSingleton::Id;
-    MsgQ qMsg(resources.getQHandle(Id::CloudTask));
-
     auto event = (isConnected) ? EventId::CloudConnected : EventId::CloudDisconnected;
-    qMsg.set({event, nullptr, 0U});
+    auto control = SysResMgmtSingleton::getInstance().getControl();
+    control->set({event, nullptr, 0});
 }
 }
 
-Cloud::Cloud(QHandle rxQHandle):
-    m_rxMsgQ(rxQHandle),
-    m_controlMsgQ(OSResourceSingleton::getInstance().getQHandle(app::OSResourceSingleton::Id::ControlTask)),
+Cloud::Cloud(std::shared_ptr<MsgInbox> inbox, std::shared_ptr<Control> control):
+    m_inbox(inbox),
+    m_control(control),
     m_wifi(wifi_status_callback),
     m_mqtt(mqtt_status_callback)
-{}
+{
+    // Subscribe to event(s) of interest.
+    m_control->subscribe(EventId::WifiConnected, m_inbox);
+    m_control->subscribe(EventId::WifiDisconnected, m_inbox);
+    m_control->subscribe(EventId::CloudConnected, m_inbox);
+    m_control->subscribe(EventId::CloudDisconnected, m_inbox);
+}
 
 void Cloud::run() {
     Msg msg = {EventId::Invalid, nullptr, 0U};
-
     m_wifi.connect();
 
     for (;;) {
-        m_rxMsgQ.get(&msg);
+        m_inbox->get(&msg);
         handle(msg);
     }
 }
@@ -53,20 +52,16 @@ void Cloud::run() {
 void Cloud::handle(const app::Msg& msg) {
     switch(msg.ev) {
     case EventId::WifiConnected:
-        m_controlMsgQ.set(msg); // forward it to control.
         connectToCloud();
         break;
     case EventId::WifiDisconnected:
-        m_controlMsgQ.set(msg); // forward it to control.
         // TODO: error handling
         break;
     case EventId::CloudConnected:
-        m_controlMsgQ.set(msg); // forward it to control.
         m_mqtt.publish("/topic/startup", "hello master Babang/Sunil, how I may serve you?");
-        m_controlMsgQ.set({EventId::DataPublishedToCloud, nullptr, 0U});
+        m_control->set({EventId::DataPublishedToCloud, nullptr, 0U});
         break;
     case EventId::CloudDisconnected:
-        m_controlMsgQ.set(msg); // forward it to control.
         // TODO: error handling.
         break;
     default:

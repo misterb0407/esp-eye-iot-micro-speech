@@ -3,10 +3,12 @@
 
 // Standard includes
 #include <map>
+#include <memory>
+#include <vector>
 
 // Project includes.
 #include "Event.h"
-#include "MsgQ.h"
+#include "MsgInbox.h"
 
 // Platform includes.
 #include "os/OSWrapper.h"
@@ -17,7 +19,7 @@ namespace control {
 class Control {
 public:
     Control() = delete;
-    explicit Control(QHandle rxQHandle);
+    explicit Control(std::shared_ptr<MsgInbox> inbox);
     ~Control() = default;
 
     // No copy allowed
@@ -25,6 +27,8 @@ public:
     Control& operator=(const Control& other) = delete;
 
     void run();
+    void set(const Msg& msg, uint32_t timeoutMs = UINT32_MAX) const;
+    void subscribe(EventId event, std::shared_ptr<MsgInbox> inbox);
 
 private:
     std::map<const EventId, const char*> m_mapStrEventId = {
@@ -32,14 +36,17 @@ private:
         {EventId::WifiDisconnected, "WifiDisconnected"},
         {EventId::CloudConnected, "CloudConnected"},
         {EventId::CloudDisconnected, "CloudDisonnected"},
+        {EventId::DataPublishedToCloud, "DataPublishedToCloud"}
     };
 
-    // Private helpes
+    std::map<EventId, std::vector<std::shared_ptr<MsgInbox>>> m_mapEventSubscriber;
+
+    // Private helpers.
     void handle(const app::Msg& msg);
     const char* toString(EventId event) const;
+    void publish(const app::Msg& msg);
 
-    MsgQ m_rxMsgQ;
-    MsgQ m_ledInbox;
+    std::shared_ptr<MsgInbox> m_inbox;
 };
 
 } // namespace app

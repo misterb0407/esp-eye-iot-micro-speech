@@ -1,52 +1,50 @@
+// Standard includes.
+#include <cassert>
+
 // Project includes.
 #include "Control.h"
 
 // Platform includes.
 #include "log/Log.h"
-#include "OSResourceSingleton.h"
+#include "os/OSWrapper.h"
 
 using namespace app;
 
-Control::Control(QHandle rxQHandle):
-    m_rxMsgQ(rxQHandle),
-    m_ledInbox(OSResourceSingleton::getInstance().getQHandle(app::OSResourceSingleton::Id::LEDTask))
-{}
+Control::Control(std::shared_ptr<MsgInbox> inbox):
+    m_inbox(inbox)
+{
+    assert(m_inbox != nullptr);
+}
 
 void Control::run() {
     Msg msg = {EventId::Invalid, nullptr, 0U};
     for (;;) {
-        m_rxMsgQ.get(&msg);
+        m_inbox->get(&msg);
         handle(msg);
     }
 }
 
+void Control::set(const Msg& msg, uint32_t timeoutMs) const {
+    m_inbox->set(msg);
+}
+
 void Control::handle(const app::Msg& msg) {
     log("control: %s(%d) event received\n", toString(msg.ev), static_cast<int>(msg.ev));
-
-    switch(msg.ev) {
-        case EventId::WifiConnected:
-            m_ledInbox.set(msg);
-            break;
-        case EventId::WifiDisconnected:
-            m_ledInbox.set(msg);
-            break;
-        case EventId::CloudConnected:
-            m_ledInbox.set(msg);
-            break;
-        case EventId::CloudDisconnected:
-            m_ledInbox.set(msg);
-            break;
-        case EventId::DataPublishedToCloud:
-            m_ledInbox.set(msg);
-            break;
-        default:
-            break;
-    }
+    publish(msg); // publish event to subscriber(s).
 }
 
 const char* Control::toString(EventId event) const {
     auto it = m_mapStrEventId.find(event);
-
     return (it != m_mapStrEventId.end()) ? it->second : "";
 }
 
+void Control::subscribe(EventId event, std::shared_ptr<MsgInbox> inbox) {
+    m_mapEventSubscriber[event].push_back(inbox);
+}
+
+void Control::publish(const app::Msg& msg) {
+    auto vinbox = m_mapEventSubscriber[msg.ev];
+    for (const auto& inbox : vinbox) {
+        inbox->set(msg);
+    }
+}

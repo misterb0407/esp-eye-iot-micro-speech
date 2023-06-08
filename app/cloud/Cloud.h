@@ -1,9 +1,13 @@
 #ifndef APP_CLOUD_H
 #define APP_CLOUD_H
 
+// Standard includes.
+#include <memory>
+
 // Project includes.
 #include "Event.h"
-#include "MsgQ.h"
+#include "MsgInbox.h"
+#include "control/Control.h"
 #include "com/wifi/Wifi.h"
 #include "com/mqtt/MqttClient.h"
 
@@ -17,7 +21,7 @@ namespace cloud {
 class Cloud {
 public:
     Cloud() = delete;
-    explicit Cloud(QHandle rxQHandle);
+    explicit Cloud(std::shared_ptr<MsgInbox> inbox, std::shared_ptr<Control> control);
     ~Cloud() = default;
 
     // No copy allowed
@@ -31,8 +35,8 @@ private:
     void handle(const app::Msg& msg);
     void connectToCloud();
 
-    MsgQ m_rxMsgQ;
-    MsgQ m_controlMsgQ;
+    std::shared_ptr<MsgInbox> m_inbox;
+    std::shared_ptr<Control> m_control;
     Wifi m_wifi;
     MqttClient m_mqtt;
 };

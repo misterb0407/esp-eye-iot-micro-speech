@@ -1,11 +1,13 @@
 #ifndef APP_AUDIO_ML_H
 #define APP_AUDIO_ML_H
 
+// Standard includes.
+#include <memory>
+
 // Project includes.
 #include "Event.h"
-#include "MsgQ.h"
-
-// Platform includes.
+#include "MsgInbox.h"
+#include "control/Control.h"
 #include "os/OSWrapper.h"
 
 namespace app {
@@ -14,7 +16,7 @@ namespace audioml {
 class AudioML {
 public:
     AudioML() = delete;
-    explicit AudioML(QHandle rxQHandle);
+    explicit AudioML(std::shared_ptr<MsgInbox> inbox, std::shared_ptr<Control> control);
     ~AudioML() = default;
 
     // No copy allowed
@@ -34,8 +36,8 @@ private:
     void onExitState(const State state);
     void onEnterState(const State state);
 
-    // TODO
-    MsgQ m_rxMsgQ;
+    std::shared_ptr<MsgInbox> m_inbox;
+    std::shared_ptr<Control> m_control;
 };
 
 } // namespace app

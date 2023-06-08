@@ -1,8 +1,9 @@
-#ifndef MSG_QUEUE_H
-#define MSG_QUEUE_H
+#ifndef MSG_INBOX_H
+#define MSG_INBOX_H
 
 // Standard includes.
 #include <cstdint>
+#include <cstddef>
 #include <limits>
 
 // Project includes.
@@ -11,15 +12,15 @@
 
 namespace app {
 
-class MsgQ {
+class MsgInbox {
 public:
-    MsgQ() = delete;
-    explicit MsgQ(QHandle handle);
-    ~MsgQ() = default;
+    MsgInbox() = delete;
+    explicit MsgInbox(size_t count);
+    ~MsgInbox() = default;
 
     // No copy allowed.
-    MsgQ(const MsgQ& other) = delete;
-    MsgQ& operator=(const MsgQ& other) = delete;
+    MsgInbox(const MsgInbox& other) = delete;
+    MsgInbox& operator=(const MsgInbox& other) = delete;
 
     void get(Msg* pMsg, uint32_t timeoutMs = UINT32_MAX) const;
     void set(const Msg& msg, uint32_t timeoutMs = UINT32_MAX) const;
@@ -30,6 +31,6 @@ private:
 
 } // namespace app
 
-using app::MsgQ;
+using app::MsgInbox;
 
-#endif // MSG_QUEUE_H
+#endif // MSG_INBOX_H

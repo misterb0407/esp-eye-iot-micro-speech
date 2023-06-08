@@ -7,8 +7,9 @@
 
 using namespace app;
 
-AudioML::AudioML(QHandle rxQHandle):
-    m_rxMsgQ(rxQHandle)
+AudioML::AudioML(std::shared_ptr<MsgInbox> inbox, std::shared_ptr<Control> control):
+    m_inbox(inbox),
+    m_control(control)
 {}
 
 void AudioML::run() {
@@ -16,15 +17,15 @@ void AudioML::run() {
 
     for (;;) {
         runStateMachine(msg);
-        m_rxMsgQ.get(&msg);
+        m_inbox->get(&msg);
     }
 }
 
 void AudioML::runStateMachine(const app::Msg& msg) {
     // TODO
-    setup();
+    //setup();
     while (1) {
-        loop();
+        //loop();
         platform::os::OSWrapper::delay(3000);
     }
 }

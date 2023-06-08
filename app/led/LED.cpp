@@ -8,11 +8,19 @@
 using namespace app;
 using namespace platform::peripheral::gpio;
 
-LED::LED(QHandle rxQHandle):
-    m_rxMsgQ(rxQHandle),
+LED::LED(std::shared_ptr<MsgInbox> inbox, std::shared_ptr<Control> control):
+    m_inbox(inbox),
+    m_control(control),
     m_currentState(State::ConnectingToWireless),
     m_nextState(State::ConnectingToWireless)
-{}
+{
+    // Subscribe to event(s) of interest.
+    m_control->subscribe(EventId::WifiConnected, m_inbox);
+    m_control->subscribe(EventId::WifiDisconnected, m_inbox);
+    m_control->subscribe(EventId::CloudConnected, m_inbox);
+    m_control->subscribe(EventId::CloudDisconnected, m_inbox);
+    m_control->subscribe(EventId::DataPublishedToCloud, m_inbox);
+}
 
 void LED::run() {
     Msg msg = {EventId::Invalid, nullptr, 0U};
@@ -21,7 +29,7 @@ void LED::run() {
 
     for (;;) {
         runStateMachine(msg);
-        m_rxMsgQ.get(&msg, TASK_RATE_MS);
+        m_inbox->get(&msg, TASK_RATE_MS);
     }
 }
 

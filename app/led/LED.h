@@ -1,9 +1,13 @@
 #ifndef APP_LED_H
 #define APP_LED_H
 
+// Standard includes.
+#include <memory>
+
 // Project includes.
 #include "Event.h"
-#include "MsgQ.h"
+#include "MsgInbox.h"
+#include "control/Control.h"
 
 // Platform includes.
 #include "os/OSWrapper.h"
@@ -14,7 +18,7 @@ namespace led {
 class LED {
 public:
     LED() = delete;
-    explicit LED(QHandle rxQHandle);
+    LED(std::shared_ptr<MsgInbox> inbox, std::shared_ptr<Control> control);
     ~LED() = default;
 
     // No copy allowed
@@ -63,7 +67,8 @@ private:
     void turnRed(bool isOn);
     void turnWhite(bool isOn);
 
-    MsgQ m_rxMsgQ;
+    std::shared_ptr<MsgInbox> m_inbox;
+    std::shared_ptr<Control> m_control;
 
     // State mamagement.
     State m_currentState;
