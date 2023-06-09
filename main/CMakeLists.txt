@@ -6,7 +6,7 @@ set(COMPONENT_SRCS
     "main.c"
     "../app/App.cpp"
     "../app/MsgInbox.cpp"
-    "../app/SysResMgmtSingleton.cpp"
+    "../app/ResourceMgmt.cpp"
     "../app/control/Control.cpp"
     "../app/led/LED.cpp"
     "../app/cloud/Cloud.cpp"

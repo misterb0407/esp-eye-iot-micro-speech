@@ -5,7 +5,7 @@
 // Project includes.
 #include "App.h"
 #include "MsgInbox.h"
-#include "SysResMgmtSingleton.h"
+#include "ResourceMgmt.h"
 #include "control/Control.h"
 #include "led/LED.h"
 #include "cloud/Cloud.cpp"
@@ -14,17 +14,17 @@
 static void initResources() {
     auto inbox = std::make_shared<MsgInbox>(10);
     auto control = std::make_shared<Control>(inbox);
-    SysResMgmtSingleton::getInstance().setControl(control);
+    ResourceMgmt::getInstance().setControl(control);
 }
 
 static void controlTask(void* argument) {
-    auto control = SysResMgmtSingleton::getInstance().getControl();
+    auto control = ResourceMgmt::getInstance().getControl();
     control->run();
 }
 
 static void ledTask(void* argument) {
     auto inbox = std::make_shared<MsgInbox>(5);
-    auto control = SysResMgmtSingleton::getInstance().getControl();
+    auto control = ResourceMgmt::getInstance().getControl();
     LED led(inbox, control);
     led.run();
 
@@ -32,14 +32,14 @@ static void ledTask(void* argument) {
 
 static void cloudTask(void* argument) {
     auto inbox = std::make_shared<MsgInbox>(10);
-    auto control = SysResMgmtSingleton::getInstance().getControl();
+    auto control = ResourceMgmt::getInstance().getControl();
     Cloud cloud(inbox, control);
     cloud.run();
 }
 
 static void audimlTask(void* argument) {
     auto inbox = std::make_shared<MsgInbox>(10);
-    auto control = SysResMgmtSingleton::getInstance().getControl();
+    auto control = ResourceMgmt::getInstance().getControl();
     AudioML audioml(inbox, control);
     audioml.run();
 }

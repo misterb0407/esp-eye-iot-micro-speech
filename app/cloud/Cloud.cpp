@@ -6,7 +6,7 @@
 
 // Project includes.
 #include "Cloud.h"
-#include "SysResMgmtSingleton.h"
+#include "ResourceMgmt.h"
 
 using namespace app;
 
@@ -14,14 +14,14 @@ namespace {
 // callback when platform feedback about the wifi connection status
 void wifi_status_callback(bool isConnected) {
     auto event = (isConnected) ? EventId::WifiConnected : EventId::WifiDisconnected;
-    auto control = SysResMgmtSingleton::getInstance().getControl();
+    auto control = ResourceMgmt::getInstance().getControl();
     control->set({event, nullptr, 0});
 }
 
 // callback when platform feedback about the mqtt connection status
 void mqtt_status_callback(bool isConnected) {
     auto event = (isConnected) ? EventId::CloudConnected : EventId::CloudDisconnected;
-    auto control = SysResMgmtSingleton::getInstance().getControl();
+    auto control = ResourceMgmt::getInstance().getControl();
     control->set({event, nullptr, 0});
 }
 }
