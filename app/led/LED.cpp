@@ -15,11 +15,9 @@ LED::LED(std::shared_ptr<MsgInbox> inbox, std::shared_ptr<Control> control):
     m_nextState(State::ConnectingToWireless)
 {
     // Subscribe to event(s) of interest.
-    m_control->subscribe(EventId::WifiConnected, m_inbox);
-    m_control->subscribe(EventId::WifiDisconnected, m_inbox);
-    m_control->subscribe(EventId::CloudConnected, m_inbox);
-    m_control->subscribe(EventId::CloudDisconnected, m_inbox);
-    m_control->subscribe(EventId::DataPublishedToCloud, m_inbox);
+    for (const auto& event : m_events_to_subscribe) {
+        m_control->subscribe(event, m_inbox);
+    }
 }
 
 void LED::run() {

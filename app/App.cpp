@@ -1,7 +1,6 @@
 // Standard includes
 #include <memory>
 
-
 // Project includes.
 #include "App.h"
 #include "MsgInbox.h"
@@ -10,12 +9,6 @@
 #include "led/LED.h"
 #include "cloud/Cloud.cpp"
 #include "audioml/AudioML.h"
-
-static void initResources() {
-    auto inbox = std::make_shared<MsgInbox>(10);
-    auto control = std::make_shared<Control>(inbox);
-    ResourceMgmt::getInstance().setControl(control);
-}
 
 static void controlTask(void* argument) {
     auto control = ResourceMgmt::getInstance().getControl();
@@ -27,7 +20,6 @@ static void ledTask(void* argument) {
     auto control = ResourceMgmt::getInstance().getControl();
     LED led(inbox, control);
     led.run();
-
 }
 
 static void cloudTask(void* argument) {
@@ -60,6 +52,12 @@ static void initTask() {
     for (size_t i = 0; i < TASK_COUNT; i++) {
         OSWrapper::createTask(&(attr[i]));
     }
+}
+
+static void initResources() {
+    auto inbox = std::make_shared<MsgInbox>(10);
+    auto control = std::make_shared<Control>(inbox);
+    ResourceMgmt::getInstance().setControl(control);
 }
 
 void APP_Init() {

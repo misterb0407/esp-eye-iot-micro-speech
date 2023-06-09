@@ -3,6 +3,7 @@
 
 // Standard includes.
 #include <memory>
+#include <list>
 
 // Project includes.
 #include "Event.h"
@@ -48,6 +49,14 @@ private:
         Normal,
         PublishingToCloud,
         Error
+    };
+
+    std::list<EventId> m_events_to_subscribe = {
+        EventId::WifiConnected,
+        EventId::WifiDisconnected,
+        EventId::CloudConnected,
+        EventId::CloudDisconnected,
+        EventId::DataPublishedToCloud
     };
 
     // State management.

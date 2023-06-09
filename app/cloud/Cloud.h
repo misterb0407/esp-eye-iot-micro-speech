@@ -3,6 +3,7 @@
 
 // Standard includes.
 #include <memory>
+#include <list>
 
 // Project includes.
 #include "Event.h"
@@ -34,6 +35,13 @@ private:
     // Private helper
     void handle(const app::Msg& msg);
     void connectToCloud();
+
+    std::list<EventId> m_events_to_subscribe = {
+        EventId::WifiConnected,
+        EventId::WifiDisconnected,
+        EventId::CloudConnected,
+        EventId::CloudDisconnected,
+    };
 
     std::shared_ptr<MsgInbox> m_inbox;
     std::shared_ptr<Control> m_control;

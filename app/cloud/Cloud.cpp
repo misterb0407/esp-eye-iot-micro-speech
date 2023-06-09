@@ -1,3 +1,6 @@
+// Standard includes
+#include <cassert>
+
 // Library includes
 #include "mqtt_client.h"
 
@@ -32,11 +35,11 @@ Cloud::Cloud(std::shared_ptr<MsgInbox> inbox, std::shared_ptr<Control> control):
     m_wifi(wifi_status_callback),
     m_mqtt(mqtt_status_callback)
 {
+    assert(m_control != nullptr);
     // Subscribe to event(s) of interest.
-    m_control->subscribe(EventId::WifiConnected, m_inbox);
-    m_control->subscribe(EventId::WifiDisconnected, m_inbox);
-    m_control->subscribe(EventId::CloudConnected, m_inbox);
-    m_control->subscribe(EventId::CloudDisconnected, m_inbox);
+    for (const auto& event : m_events_to_subscribe) {
+        m_control->subscribe(event, m_inbox);
+    }
 }
 
 void Cloud::run() {
