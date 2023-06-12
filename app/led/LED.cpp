@@ -32,25 +32,9 @@ void LED::run() {
 }
 
 void LED::runStateMachine(const Msg& msg) {
-    switch (m_currentState) {
-        case State::ConnectingToWireless:
-            handleStateConnectingToWireless(msg);
-            break;
-        case State::ConnectingToCloud:
-            handleStateConnectingToCloud(msg);
-            break;
-        case State::PublishingToCloud:
-            handleStatePublishingToCloud(msg);
-            break;
-        case State::Normal:
-            handleStateNormal(msg);
-            break;
-        case State::Error:
-            handleStateError(msg);
-            break;
-        default:
-            break;
-    }
+    assert(m_mapStateHandler.find(m_currentState) != m_mapStateHandler.end());
+
+    (this->*m_mapStateHandler[m_currentState])(msg);
 
     if (m_currentState != m_nextState) {
         log("LED: State %d -> %d\n", (int)m_currentState, (int)m_nextState);

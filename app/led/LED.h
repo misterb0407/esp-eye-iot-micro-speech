@@ -4,6 +4,7 @@
 // Standard includes.
 #include <memory>
 #include <list>
+#include <map>
 
 // Project includes.
 #include "Event.h"
@@ -70,11 +71,19 @@ private:
     void handleStateNormal(const app::Msg& msg);
     void handleStatePublishingToCloud(const app::Msg& msg);
     void handleStateError(const app::Msg& msg);
-    void handleStateSleep(const app::Msg& msg);
 
     // Private helpers
     void turnRed(bool isOn);
     void turnWhite(bool isOn);
+
+    // Associate the state with its handler
+    std::map<State, void (LED::*)(const app::Msg& msg)> m_mapStateHandler = {
+        {State::ConnectingToWireless, &LED::handleStateConnectingToWireless},
+        {State::ConnectingToCloud, &LED::handleStateConnectingToCloud},
+        {State::Normal, &LED::handleStateNormal},
+        {State::PublishingToCloud, &LED::handleStatePublishingToCloud},
+        {State::Error, &LED::handleStateError},
+    };
 
     std::shared_ptr<MsgInbox> m_inbox;
     std::shared_ptr<Control> m_control;
