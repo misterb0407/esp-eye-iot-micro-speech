@@ -69,7 +69,6 @@ private:
     void handleStateConnectingToWireless(const app::Msg& msg);
     void handleStateConnectingToCloud(const app::Msg& msg);
     void handleStateNormal(const app::Msg& msg);
-    void handleStatePublishingToCloud(const app::Msg& msg);
     void handleStateError(const app::Msg& msg);
 
     // Private helpers
@@ -81,7 +80,6 @@ private:
         {State::ConnectingToWireless, &LED::handleStateConnectingToWireless},
         {State::ConnectingToCloud, &LED::handleStateConnectingToCloud},
         {State::Normal, &LED::handleStateNormal},
-        {State::PublishingToCloud, &LED::handleStatePublishingToCloud},
         {State::Error, &LED::handleStateError},
     };
 

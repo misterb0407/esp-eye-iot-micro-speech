@@ -109,24 +109,23 @@ void LED::handleStateConnectingToCloud(const Msg& msg) {
 }
 
 void LED::handleStateNormal(const app::Msg& msg) {
+    bool isOn = false;
+    uint32_t blink_rate_ms = 50; // default
+    uint32_t blink_rate_period_ms = 1000; // default
+    uint32_t counter = 0;
+
     switch(msg.ev) {
         case EventId::DataPublishedToCloud:
-            m_nextState = State::PublishingToCloud;
+            turnRed(false);
+            do {
+                turnWhite(isOn^=true);
+                OSWrapper::delay(blink_rate_ms);
+                counter++;
+            }while(counter*blink_rate_ms <= blink_rate_period_ms);
+            turnWhite(true);
             break;
         default:
             break;
-    }
-}
-
-void LED::handleStatePublishingToCloud(const Msg& msg) {
-    static bool s_isOn = false;
-    static uint32_t s_counter3 = 0;
-
-    turnWhite(s_isOn^=true);
-    s_counter3++;
-
-    if (s_counter3*TASK_RATE_MS >= PUBLISHING_TO_CLOUD_BLINK_DURATION_MS) {
-        m_nextState = State::Normal;
     }
 }
 
