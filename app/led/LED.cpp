@@ -109,20 +109,39 @@ void LED::handleStateConnectingToCloud(const Msg& msg) {
 }
 
 void LED::handleStateNormal(const app::Msg& msg) {
-    bool isOn = false;
-    uint32_t blink_rate_ms = 50; // default
-    uint32_t blink_rate_period_ms = 1000; // default
+    static bool s_isLedOn3 = true;
+    const uint32_t BLINK_RATE_MS = 50;
+    const uint32_t BLINK_PERIOD_MS = 1500;
     uint32_t counter = 0;
-
     switch(msg.ev) {
         case EventId::DataPublishedToCloud:
-            turnRed(false);
+            // Toggle LED at certain rate.
             do {
-                turnWhite(isOn^=true);
-                OSWrapper::delay(blink_rate_ms);
+                turnWhite(s_isLedOn3^=true);
+                OSWrapper::delay(BLINK_RATE_MS);
                 counter++;
-            }while(counter*blink_rate_ms <= blink_rate_period_ms);
+            }while(counter*BLINK_RATE_MS <= BLINK_PERIOD_MS);
             turnWhite(true);
+            break;
+        case EventId::VoiceYesDetected:
+            turnRed(false);
+            // Toggle LED at certain rate.
+            do {
+                turnWhite(s_isLedOn3^=true);
+                OSWrapper::delay(BLINK_RATE_MS);
+                counter++;
+            }while(counter*BLINK_RATE_MS <= BLINK_PERIOD_MS);
+            turnWhite(true);
+            break;
+        case  EventId::VoiceNoDetected:
+            turnWhite(false);
+            // Toggle LED at certain rate.
+            do {
+                turnRed(s_isLedOn3^=true);
+                OSWrapper::delay(BLINK_RATE_MS);
+                counter++;
+            }while(counter*BLINK_RATE_MS <= BLINK_PERIOD_MS);
+            turnRed(true);
             break;
         default:
             break;

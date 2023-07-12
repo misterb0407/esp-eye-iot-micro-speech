@@ -61,11 +61,17 @@ void Cloud::handle(const app::Msg& msg) {
         // TODO: error handling
         break;
     case EventId::CloudConnected:
-        m_mqtt.publish("/topic/startup", "hello master Babang/Sunil, how I may serve you?");
+        m_mqtt.publish("/topic/startup", "hello master Babang, how I may serve you?");
         m_control->set({EventId::DataPublishedToCloud, nullptr, 0U});
         break;
     case EventId::CloudDisconnected:
         // TODO: error handling.
+        break;
+    case EventId::VoiceYesDetected:
+        m_mqtt.publish("/topic/voice-cmd", "yes");
+        break;
+    case EventId::VoiceNoDetected:
+        m_mqtt.publish("/topic/voice-cmd", "no");
         break;
     default:
         break;

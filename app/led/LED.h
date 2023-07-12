@@ -57,7 +57,9 @@ private:
         EventId::WifiDisconnected,
         EventId::CloudConnected,
         EventId::CloudDisconnected,
-        EventId::DataPublishedToCloud
+        EventId::DataPublishedToCloud,
+        EventId::VoiceYesDetected,
+        EventId::VoiceNoDetected
     };
 
     // State management.

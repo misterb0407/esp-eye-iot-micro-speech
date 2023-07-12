@@ -41,6 +41,8 @@ private:
         EventId::WifiDisconnected,
         EventId::CloudConnected,
         EventId::CloudDisconnected,
+        EventId::VoiceYesDetected,
+        EventId::VoiceNoDetected
     };
 
     std::shared_ptr<MsgInbox> m_inbox;
